@@ -23,7 +23,7 @@ import { Label } from '@/components/ui/shadcn/ui/label'
 import useCreateInfiniteQuery from '@/hooks/BrightBaseQuery/useCreateInfiniteQuery'
 import FakeTables from '@/api/FakeTables'
 import VirtualizedInfiniteMap from '@/components/BrightBaseQuery/VirtualizedInfiniteMap'
-import useSuspenseVirtualizerInfiniteQuery from '@/hooks/BrightBaseQuery/useSuspenseVirtualizerInfiniteQuery'
+import useSuspenseVirtualizedInfiniteMap from '@/hooks/BrightBaseQuery/useSuspenseVirtualizerInfiniteQuery'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/shadcn/ui/card'
 import { Loader2 } from 'lucide-react'
 import Carousel from '@/components/ui/Carousel'
@@ -38,7 +38,7 @@ function Index() {
   return (
     <div className="size-screen">
       <Header />
-      <ResizablePanelGroup className="max-w-screen-2xl mx-auto border-l border-r" direction="horizontal">
+      <ResizablePanelGroup className="[max-width:1920px] mx-auto border-l border-r" direction="horizontal">
         {/*  */}
         <ResizablePanel defaultSize={70}>
           <WelcomeAndDocs />
@@ -98,7 +98,7 @@ function Index() {
 function Header() {
   return (
     <header className="h-12 border-b shadow-sm flex items-center justify-center">
-      <div className="px-2 flex items-center justify-between w-full max-w-screen-2xl">
+      <div className="px-2 flex items-center justify-between w-full [max-width:1920px]">
         <span className="font-semibold text-xl">BrightStack Official</span>
         <div className="w-fit flex items-center gap-3">
           <Command>
@@ -161,14 +161,14 @@ function WelcomeAndDocs() {
 
 function VirtualizeInfiniteScroll() {
   const query = useCreateInfiniteQuery(FakeTables.todos, 20)
-  const props = useSuspenseVirtualizerInfiniteQuery(query, { estimateSize: (i) => (i === 0 ? 247 : 231) })
+  const props = useSuspenseVirtualizedInfiniteMap(query, { estimateSize: (i) => (i === 0 ? 247 : 231) })
   return (
     <VirtualizedInfiniteMap
       {...props}
       className="size-full px-4 animate-in"
       loadingComponent={
-        <div className="flex-1 w-full h-32 flex items-center justify-center">
-          <Loader2 className="size-12" />
+        <div className="flex-1 w-full h-[147px] flex items-center justify-center">
+          <Loader2 className="size-10 animate-spin" />
         </div>
       }
     >
@@ -176,7 +176,9 @@ function VirtualizeInfiniteScroll() {
         <Card className={tw('mb-4', i === 0 && 'mt-4')}>
           <CardHeader>
             <CardTitle>BrightSide</CardTitle>
-            <CardDescription>Themed virtualized scroll with infinite suspense query from generated supabase in seconds.</CardDescription>
+            <CardDescription>
+              Themed and virtualized scroll with infinite suspense query from generated supabase schemas in seconds.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p>{label}</p>

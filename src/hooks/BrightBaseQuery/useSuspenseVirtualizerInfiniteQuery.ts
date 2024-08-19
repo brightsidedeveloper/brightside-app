@@ -1,7 +1,7 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useSuspenseInfiniteQuery } from 'brightside-developer'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { UseBrightInfiniteQueryReturn } from './useCreateInfiniteQuery'
+import { UseCreateInfiniteQueryReturn } from './useCreateInfiniteQuery'
 
 interface VirtualizerOptions {
   estimateSize: (index: number) => number
@@ -9,8 +9,8 @@ interface VirtualizerOptions {
   horizontal?: boolean
 }
 
-export default function useSuspenseVirtualizerInfiniteQuery<T extends { [key: string]: unknown }>(
-  query: UseBrightInfiniteQueryReturn<T>,
+export default function useSuspenseVirtualizedInfiniteMap<T extends { [key: string]: unknown }>(
+  query: UseCreateInfiniteQueryReturn<T>,
   { estimateSize, overscan, horizontal = false }: VirtualizerOptions
 ) {
   const {
@@ -26,7 +26,7 @@ export default function useSuspenseVirtualizerInfiniteQuery<T extends { [key: st
   const scrollRef = useRef<HTMLDivElement | null>(null)
   scrollRef.current = scrollViewMounted ? document.querySelector('[data-radix-scroll-area-viewport]')! : null
   const virtualizer = useVirtualizer({
-    count: items.length,
+    count: items.length + (queryRest.isFetching ? 1 : 0),
     getScrollElement: () => scrollRef.current,
     overscan: overscan ?? 12,
     estimateSize,
@@ -38,8 +38,8 @@ export default function useSuspenseVirtualizerInfiniteQuery<T extends { [key: st
   const onScroll = useCallback(() => {
     if (!scrollRef.current) return
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current
-    if (scrollTop + clientHeight + 100 >= scrollHeight && !queryRest.isFetching) fetchNextPage()
-  }, [fetchNextPage, queryRest.isFetching])
+    if (scrollTop + clientHeight + 500 >= scrollHeight && !queryRest.isFetching && queryRest.hasNextPage) fetchNextPage()
+  }, [fetchNextPage, queryRest.hasNextPage, queryRest.isFetching])
 
   useEffect(() => {
     const { current: el } = scrollRef
@@ -54,6 +54,6 @@ export default function useSuspenseVirtualizerInfiniteQuery<T extends { [key: st
   )
 }
 
-export type UseSuspenseVirtualizerInfiniteQueryReturn<T extends { [key: string]: unknown }> = ReturnType<
-  typeof useSuspenseVirtualizerInfiniteQuery<T>
+export type UseSuspenseVirtualizedInfiniteMapReturn<T extends { [key: string]: unknown }> = ReturnType<
+  typeof useSuspenseVirtualizedInfiniteMap<T>
 >
